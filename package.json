@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "prompt-star",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -20,7 +20,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
