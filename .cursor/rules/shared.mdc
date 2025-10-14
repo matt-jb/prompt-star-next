@@ -1,0 +1,60 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
+# AI Rules for prompt star
+
+Prompt Star is a web-based platform for storing, managing, and sharing LLM prompts. It serves as a centralized repository where users can create prompts in plaintext or Markdown format, organize them by categories, and share them publicly with the community. The platform features a voting system to identify high-quality prompts, user profiles to showcase public prompts, and community interaction features. The MVP focuses on core CRUD functionality for prompts, user authentication with email verification, public/private visibility settings, and a one-vote-per-prompt upvoting system to build a collaborative prompt engineering community.
+
+## Tech Stack
+
+- TypeScript 5
+- React 19
+- Next.js
+- PostgreSQL
+- Prisma
+- BetterAuth
+- Tanstack Query
+- Tailwind 4
+- Shadcn/ui
+
+## Project Structure
+
+When introducing changes to the project, always follow the directory structure below:
+
+prompt-star-nextjs/
+├── app/ # Next.js App Router with route groups
+│ ├── (auth)/ # Authentication routes
+│ ├── (prompts)/ # Prompt routes
+│ ├── (users)/ # User profile routes
+│ └── api/ # API routes
+├── features/ # Feature-based organization
+│ ├── prompts/ # Prompt and votes-related functionality
+│ └── users/ # User management
+├── server/ # Server-side logic
+│ ├── auth/ # Authentication configuration
+│ ├── db/ # Database schema and client
+│ ├── mutations/ # Database mutations
+│ ├── queries/ # Database queries
+│ └── services/ # Business logic services
+├── ui/ # Shared UI components
+├── lib/ # Utility functions
+└── tests/ # Test files
+
+When modifying the directory structure, always update this section.
+
+## Coding practices
+
+### Guidelines for clean code
+
+- Use feedback from linters to improve the code when making changes.
+- Prioritize error handling and edge cases.
+- Handle errors and edge cases at the beginning of functions.
+- Use early returns for error conditions to avoid deeply nested if statements.
+- Place the happy path last in the function for improved readability.
+- Avoid unnecessary else statements; use if-return pattern instead.
+- Use guard clauses to handle preconditions and invalid states early.
+- Implement proper error logging and user-friendly error messages.
+- Consider using custom error types or error factories for consistent error handling.

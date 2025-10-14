@@ -1,0 +1,32 @@
+---
+description: 
+globs: *.tsx,*.ts
+alwaysApply: false
+---
+
+### Guidelines for React
+
+#### NEXT_JS
+
+- Use App Router and Server Components for improved performance and SEO
+- Use server actions for form handling and data mutations from Server Components
+- Leverage Next.js Image component with proper sizing for core web vitals optimization
+- Implement the Metadata API for dynamic SEO optimization
+- Use React Server Components for {{data_fetching_operations}} to reduce client-side JavaScript
+- Implement Streaming and Suspense for improved loading states
+- Use the new Link component without requiring a child <a> tag
+- Leverage parallel routes for complex layouts and parallel data fetching
+- Implement intercepting routes for modal patterns and nested UIs
+
+#### TANSTACK_QUERY
+
+- Use TanStack Query (formerly React Query) with appropriate staleTime and gcTime based on data freshness requirements
+- Implement the useInfiniteQuery hook for pagination and infinite scrolling
+- Use optimistic updates for mutations to make the UI feel more responsive
+- Leverage queryClient.setQueryDefaults to establish consistent settings for query categories
+- Use suspense mode with <Suspense> boundaries for a more declarative data fetching approach
+- Implement retry logic with custom backoff algorithms for transient network issues
+- Use the select option to transform and extract specific data from query results
+- Implement mutations with onMutate, onError, and onSettled for robust error handling
+- Use Query Keys structuring pattern ([entity, params]) for better organization and automatic refetching
+- Implement query invalidation strategies to keep data fresh after mutations
