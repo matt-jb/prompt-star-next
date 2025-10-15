@@ -35,12 +35,12 @@ prompt-star-nextjs/
 │ └── users/ # User management
 ├── server/ # Server-side logic
 │ ├── auth/ # Authentication configuration
-│ ├── db/ # Database schema and client
 │ ├── mutations/ # Database mutations
 │ ├── queries/ # Database queries
 │ └── services/ # Business logic services
 ├── ui/ # Shared UI components
 ├── lib/ # Utility functions
+├── prisma/ # Prisma schema and client
 └── tests/ # Test files
 
 When modifying the directory structure, always update this section.
