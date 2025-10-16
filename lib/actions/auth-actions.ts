@@ -3,10 +3,21 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import prisma from "@/lib/prisma";
 
-export const signUp = async (email: string, password: string, name: string) => {
+export const signUp = async (
+  email: string,
+  password: string,
+  username: string
+) => {
   const result = await auth.api.signUpEmail({
-    body: { email, password, name, callbackURL: "/" },
+    body: {
+      email,
+      password,
+      name: "",
+      username,
+      callbackURL: "/",
+    },
   });
 
   if (result.user) {
@@ -22,6 +33,11 @@ export const signIn = async (email: string, password: string) => {
   });
 
   if (result.user) {
+    await prisma.user.update({
+      where: { id: result.user.id },
+      data: { lastLoginAt: new Date() },
+    });
+
     redirect("/");
   }
 

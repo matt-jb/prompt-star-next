@@ -25,7 +25,16 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
+  username        String?
+  displayUsername String?
+
+  lastLoginAt DateTime @default(now())
+
+  prompts Prompt[]
+  votes   Vote[]
+
   @@unique([email])
+  @@unique([username])
   @@map("user")
 }
 
@@ -72,4 +81,53 @@ model Verification {
   updatedAt  DateTime @default(now()) @updatedAt
 
   @@map("verification")
+}
+
+enum PromptVisibility {
+  PUBLIC
+  PRIVATE
+}
+
+model Prompt {
+  id          String           @id @default(cuid())
+  title       String           @db.VarChar(128)
+  description String?          @db.VarChar(512)
+  content     String
+  visibility  PromptVisibility @default(PUBLIC)
+  isDeleted   Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  authorId    String?
+  categoryId  String
+
+  author   User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  votes    Vote[]
+
+  @@map("prompt")
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  prompts Prompt[]
+
+  @@map("category")
+}
+
+model Vote {
+  id        String   @id @default(cuid())
+  userId    String
+  promptId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  prompt Prompt @relation(fields: [promptId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, promptId])
+  @@map("vote")
 }
