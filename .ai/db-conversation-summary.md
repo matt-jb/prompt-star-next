@@ -2,10 +2,10 @@
 <decisions>
 
 1.  A dedicated `Category` table will be implemented instead of a static `ENUM`.
-2.  Vote counts will be calculated via direct database queries for the MVP; a denormalized counter will not be used.
+2.  A denormalized vote counter will be used on the `Prompt` model to store the number of votes for a prompt.
 3.  The `BetterAuth` schema (`User`, `Account`, `Session`, `Verification`) will be used as-is, with no changes except for the addition of a `lastLoginAt` field to the `User` model.
 4.  The `lastLoginAt` field will be non-nullable and populated upon user registration.
-5.  Character limits will be enforced at the database level: `title` (100), `description` (500), and `content` (50,000).
+5.  Character limits will be enforced at the database level: `title` (128), `description` (512), and `content` (50,000).
 6.  When a user account is deleted, their associated prompts will be soft-deleted by setting an `isDeleted` flag to `true`. Their votes will be hard-deleted via a cascading delete.
 7.  The relationship between a soft-deleted prompt and its author will be maintained by making the author relation optional on the `Prompt` model.
 8.  Additional indexes for performance optimization will not be created for the MVP.
@@ -41,7 +41,7 @@ The database must support user account management via `BetterAuth`, full CRUD fu
 
 - **Authentication Models (`User`, `Account`, `Session`, `Verification`):** These will be based on the existing `BetterAuth` Prisma schema. The `User` model will be modified to include a non-nullable `lastLoginAt: DateTime` field, which will be set upon registration. No other changes will be made to these core models.
 - **`Prompt`:** This is a central entity.
-  - **Fields:** It will include `title` (String, 100 chars), `description` (String, 500 chars), `content` (String, 50,000 chars), `visibility` (ENUM `PromptVisibility`, default `PUBLIC`), `isDeleted` (Boolean, default `false` for soft-deletes), `createdAt`, and `updatedAt`.
+  - **Fields:** It will include `title` (String, 128 chars), `description` (String, 512 chars), `content` (String, 50,000 chars), `visibility` (ENUM `PromptVisibility`, default `PUBLIC`), `isDeleted` (Boolean, default `false` for soft-deletes), `createdAt`, and `updatedAt`.
   - **Relationships:** It will have a many-to-one relationship with `User` (the author) and `Category`. It will have a one-to-many relationship with `Vote`. The relation to `User` will be optional to support author deletion while retaining soft-deleted prompts.
 - **`Category`:**
   - **Fields:** It will have a `name` (String, unique) and timestamps (`createdAt`, `updatedAt`).
@@ -59,7 +59,7 @@ The database must support user account management via `BetterAuth`, full CRUD fu
 **Security and Scalability Concerns:**
 
 - **Security:** The "one vote per user per prompt" rule is guaranteed by a database constraint. Soft-deletion of prompts upon user account deletion prevents data loss while removing user-identifiable content from public view.
-- **Scalability:** For the MVP, performance optimizations such as a denormalized `voteCount` on prompts and specialized indexes have been deferred. Read operations will rely on direct queries. This is acceptable for the initial launch but should be revisited as the platform scales.
+- **Scalability:** For the MVP, the only performance optimization will be a denormalized `voteCount` on prompts. Any specialized indexes have been deferred. Read operations will rely on direct queries. This is acceptable for the initial launch but should be revisited as the platform scales.
 
 </database_planning_summary>
 

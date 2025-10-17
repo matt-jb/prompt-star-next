@@ -99,6 +99,7 @@ model Prompt {
   updatedAt   DateTime         @updatedAt
   authorId    String?
   categoryId  String
+  voteCount   Int              @default(0)
 
   author   User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
   category Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)

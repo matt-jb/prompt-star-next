@@ -35,8 +35,8 @@ These models are used as-is, with one addition to the `User` model.
 
 - **`Prompt`**
   - `id`: String (Primary Key)
-  - `title`: String (Constraint: Max 100 characters)
-  - `description`: String (Optional, Constraint: Max 500 characters)
+  - `title`: String (Constraint: Max 128 characters)
+  - `description`: String (Optional, Constraint: Max 512 characters)
   - `content`: String (Constraint: Max 50,000 characters)
   - `visibility`: `PromptVisibility` ENUM (Default: `PUBLIC`)
   - `isDeleted`: Boolean (Default: `false` for soft-deletes)
@@ -44,6 +44,7 @@ These models are used as-is, with one addition to the `User` model.
   - `updatedAt`: DateTime (Updated automatically)
   - `authorId`: String (Foreign Key to `User`, optional/nullable)
   - `categoryId`: String (Foreign Key to `Category`)
+  - `voteCount`: Integer (Default: 0)
 
 - **`Category`**
   - `id`: String (Primary Key)
@@ -100,6 +101,6 @@ These models are used as-is, with one addition to the `User` model.
 ## 5. Additional Notes and Design Decisions
 
 - **Soft Deletes for Prompts**: The `Prompt` table includes an `isDeleted` flag to enable soft deletion. This prevents data loss if an author deletes their account and ensures that valuable community prompts can be retained. Soft-deleted prompts will be excluded from all application-level queries.
-- **Vote Counting Strategy**: For the MVP, vote counts will be calculated with real-time database queries (e.g., `prisma.vote.count(...)`). A denormalized `voteCount` on the `Prompt` table was deferred to maintain simplicity.
+- **Vote Counting Strategy**: A denormalized `voteCount` on the `Prompt` table is used to store the number of votes for a prompt.
 - **Data Integrity**: Character limits on `title`, `description`, and `content` are enforced at the database level to ensure data consistency. The unique constraint on `Vote` (`userId`, `promptId`) guarantees the integrity of the voting system.
 - **Cascading Deletes for Votes**: The schema is configured to automatically remove all `Vote` records associated with a deleted `User` or `Prompt`. This maintains relational integrity and prevents orphaned rows in the database.
