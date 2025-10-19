@@ -152,6 +152,18 @@ This document outlines the REST API for the Prompt Star application, based on th
   - `403 Forbidden`: User is not the author of the prompt.
   - `404 Not Found`: Prompt with the given ID does not exist.
 
+#### GET /api/prompts/top
+
+- **Description**: Retrieves a paginated list of top-voted public prompts created within a specified period.
+- **Authentication**: None required.
+- **Query Parameters**:
+  - `page` (number, optional, default: 1): The page number for pagination.
+  - `pageSize` (number, optional, default: 20): The number of items per page.
+  - `period` (number, optional, default: 7): The time period in days to consider for top prompts.
+  - `categoryId` (string, optional): Filters prompts by the specified category ID.
+- **Success Response (200 OK)**: A paginated list of prompt objects, same format as `GET /api/prompts`.
+- **Error Response (400 Bad Request)**: Invalid query parameters.
+
 ### 2.2. Votes
 
 #### POST /api/prompts/{promptId}/vote
@@ -236,7 +248,4 @@ Input validation will be performed at the API layer before processing requests.
 
 ### Business Logic
 
-- **Soft Deletes**: `DELETE /api/prompts/{promptId}` will perform a soft delete by setting `isDeleted = true`. All GET endpoints that return prompts must filter out records where `isDeleted = true`.
-- **Vote Counting**: The `voteCount` field in prompt responses will be updated using a trigger or a transaction when votes are added or removed.
-- **Unique Votes**: The unique constraint `@@unique([userId, promptId])` on the `Vote` table in the database prevents a user from voting more than once. The API will catch the resulting database error and return a `409 Conflict` status code.
-- **User Prompts Endpoint**: The `/api/users/{userId}/prompts` endpoint will use the special identifier `me` for the currently authenticated user (e.g., `/api/users/me/prompts`) to fetch both public and private prompts. For any other `userId`, it will only return public prompts.
+- **Soft Deletes**: `DELETE /api/prompts/{promptId}` will perform a soft delete by setting `isDeleted = true`. All GET endpoints that return prompts must filter out records where `
