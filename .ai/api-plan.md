@@ -182,34 +182,6 @@ This document outlines the REST API for the Prompt Star application, based on th
   - `403 Forbidden`: User is not the author of the vote.
   - `404 Not Found`: Prompt does not exist or the user has not voted on it.
 
-#### POST /api/votes/batch-check
-
-- **Description**: Passes a list of prompt IDs to the API and returns if the user has voted on each prompt.
-- **Authentication**: Required.
-- **Request Payload**:
-  ```json
-  {
-    "promptIds": ["clxqlb55h000008l3f2r1e1c7", "clxqlb55h000008l3f2r1e1c8"]
-  }
-  ```
-- **Success Response (200 OK)**:
-  ```json
-  [
-    {
-      "promptId": "clxqlb55h000008l3f2r1e1c7",
-      "hasVoted": true
-    },
-    {
-      "promptId": "clxqlb55h000008l3f2r1e1c8",
-      "hasVoted": false
-    }
-  ]
-  ```
-- **Error Responses**:
-  - `400 Bad Request`: Invalid prompt IDs or payload.
-  - `401 Unauthorized`: User is not authenticated.
-  - `404 Not Found`: User with the given ID does not exist.
-
 ### 2.3. Categories
 
 #### GET /api/categories

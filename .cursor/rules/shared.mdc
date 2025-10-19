@@ -40,7 +40,7 @@ prompt-star-nextjs/
 │ └── services/ # Business logic services
 ├── ui/ # Shared UI components
 ├── lib/ # Utility functions
-├── prisma/ # Prisma schema and client
+├── prisma/ # Prisma schema, client, and seed data
 └── tests/ # Test files
 
 When modifying the directory structure, always update this section.

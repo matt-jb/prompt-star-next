@@ -74,6 +74,7 @@ type BasePromptDto = Pick<
  */
 export type PromptDto = BasePromptDto & {
   voteCount: number;
+  periodVoteCount?: number;
 };
 
 /**
