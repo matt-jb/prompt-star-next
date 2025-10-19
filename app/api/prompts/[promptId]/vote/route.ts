@@ -16,7 +16,7 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { promptId } = params;
+    const { promptId } = await params;
     const vote = await createVote(promptId, session.user.id);
 
     const voteDto: VoteDto = {
@@ -56,7 +56,7 @@ export async function DELETE(
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const { promptId } = params;
+    const { promptId } = await params;
 
     if (!promptId) {
       return NextResponse.json(
