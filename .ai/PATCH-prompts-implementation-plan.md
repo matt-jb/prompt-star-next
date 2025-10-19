@@ -119,7 +119,7 @@ This document outlines the implementation plan for the `PATCH /api/prompts/{prom
     - `description`: `z.string().max(512).optional()`
     - `content`: `z.string().min(1).optional()`
     - `visibility`: `z.enum(['PUBLIC', 'PRIVATE']).optional()`
-    - `categoryId`: `z.string().cuid().optional()`
+    - `categoryId`: `z.cuid().optional()`
 
 2.  **Create Service Layer**: If it doesn't exist, create `server/services/prompt.service.ts`.
     - Implement an `updatePrompt(promptId: string, userId: string, data: UpdatePromptCommand): Promise<Prompt>` function.
@@ -139,5 +139,3 @@ This document outlines the implementation plan for the `PATCH /api/prompts/{prom
     - Call `promptService.updatePrompt` with `params.promptId`, the user's ID, and the validated data.
     - Catch specific errors thrown from the service and map them to the appropriate HTTP status codes (`403`, `404`).
     - On success, format the returned prompt into `CreatedPromptDto` and return a `200 OK` response.
-
-

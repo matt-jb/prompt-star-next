@@ -1,16 +1,219 @@
 import type { Prisma } from "@/lib/generated/prisma";
 import db from "@/lib/prisma";
 import type { z } from "zod";
-import { getPromptsSchema } from "@/lib/schemas/prompt.schema";
-import type { PaginatedPromptsDto, PromptDto } from "@/lib/dto";
+import {
+  getPromptsSchema,
+  createPromptSchema,
+  updatePromptSchema,
+} from "@/lib/schemas/prompt.schema";
+import type {
+  CreatedPromptDto,
+  CreatePromptCommand,
+  PaginatedPromptsDto,
+  PromptDetailsDto,
+  PromptDto,
+  UpdatePromptCommand,
+} from "@/lib/dto";
 import { PromptVisibility } from "@/lib/generated/prisma";
 import type { getTopAndTrendingPromptsSchema } from "@/lib/schemas/prompt.schema";
+import {
+  ForbiddenError,
+  NotFoundError,
+  BadRequestError,
+} from "@/server/errors";
 
 type GetPromptsOptions = z.infer<typeof getPromptsSchema> & {
   currentUserId?: string;
 };
 
+type PromptWithAuthorAndCategory = Prisma.PromptGetPayload<{
+  include: {
+    author: { select: { id: true; username: true } };
+    category: { select: { id: true; name: true } };
+  };
+}>;
+
 export class PromptService {
+  public async createPrompt(
+    data: CreatePromptCommand,
+    authorId: string
+  ): Promise<CreatedPromptDto> {
+    const { title, description, content, visibility, categoryId } =
+      createPromptSchema.parse(data);
+
+    const newPrompt = await db.$transaction(async (prisma) => {
+      const category = await prisma.category.findUnique({
+        where: { id: categoryId },
+      });
+
+      if (!category) {
+        throw new NotFoundError("Category not found");
+      }
+
+      const prompt = await prisma.prompt.create({
+        data: {
+          title,
+          description,
+          content,
+          visibility,
+          author: {
+            connect: { id: authorId },
+          },
+          category: {
+            connect: { id: categoryId },
+          },
+        },
+        include: {
+          author: {
+            select: { id: true, username: true },
+          },
+          category: {
+            select: { id: true, name: true },
+          },
+        },
+      });
+      return prompt;
+    });
+
+    return this._mapToCreatedPromptDto(newPrompt);
+  }
+
+  public async updatePrompt(
+    promptId: string,
+    userId: string,
+    data: UpdatePromptCommand
+  ): Promise<CreatedPromptDto> {
+    const { title, description, content, visibility, categoryId } =
+      updatePromptSchema.parse(data);
+
+    const promptToUpdate = await db.prompt.findUnique({
+      where: { id: promptId, isDeleted: false },
+    });
+
+    if (!promptToUpdate || promptToUpdate.authorId !== userId) {
+      throw new NotFoundError("Prompt not found");
+    }
+
+    if (categoryId) {
+      const categoryExists = await db.category.findUnique({
+        where: { id: categoryId },
+      });
+      if (!categoryExists) {
+        throw new BadRequestError("Category not found");
+      }
+    }
+
+    const updatedPrompt = await db.prompt.update({
+      where: { id: promptId },
+      data: {
+        title,
+        description,
+        content,
+        visibility,
+        categoryId,
+      },
+      include: {
+        author: {
+          select: { id: true, username: true },
+        },
+        category: {
+          select: { id: true, name: true },
+        },
+      },
+    });
+
+    return this._mapToCreatedPromptDto(updatedPrompt);
+  }
+
+  public async getPromptDetails(
+    promptId: string,
+    userId?: string
+  ): Promise<PromptDetailsDto> {
+    const prompt = await db.prompt.findUnique({
+      where: {
+        id: promptId,
+        isDeleted: false,
+      },
+      include: {
+        author: {
+          select: { id: true, username: true },
+        },
+        category: {
+          select: { id: true, name: true },
+        },
+      },
+    });
+
+    if (!prompt) {
+      throw new NotFoundError("Prompt not found");
+    }
+
+    if (prompt.visibility === PromptVisibility.PRIVATE) {
+      if (!userId || prompt.authorId !== userId) {
+        throw new NotFoundError("Prompt not found");
+      }
+    }
+
+    let hasVoted = false;
+    if (userId) {
+      const vote = await db.vote.findUnique({
+        where: {
+          userId_promptId: {
+            userId,
+            promptId,
+          },
+        },
+      });
+      hasVoted = !!vote;
+    }
+
+    return {
+      id: prompt.id,
+      title: prompt.title,
+      description: prompt.description,
+      content: prompt.content,
+      visibility: prompt.visibility,
+      createdAt: prompt.createdAt,
+      updatedAt: prompt.updatedAt,
+      author: prompt.author,
+      category: prompt.category,
+      voteCount: prompt.voteCount,
+      hasVoted,
+    };
+  }
+
+  public async deletePrompt(promptId: string, userId: string): Promise<void> {
+    const result = await db.prompt.updateMany({
+      where: {
+        id: promptId,
+        authorId: userId,
+        isDeleted: false,
+      },
+      data: {
+        isDeleted: true,
+      },
+    });
+
+    if (result.count === 0) {
+      const prompt = await db.prompt.findUnique({
+        where: {
+          id: promptId,
+          isDeleted: false,
+        },
+      });
+
+      if (!prompt) {
+        throw new NotFoundError("Prompt not found");
+      }
+
+      if (prompt.authorId !== userId) {
+        throw new ForbiddenError(
+          "You do not have permission to delete this prompt."
+        );
+      }
+    }
+  }
+
   public async getPrompts(
     options: GetPromptsOptions
   ): Promise<PaginatedPromptsDto> {
@@ -249,6 +452,22 @@ export class PromptService {
       ...(prompt.periodVoteCount !== undefined && {
         periodVoteCount: prompt.periodVoteCount,
       }),
+    };
+  }
+
+  private _mapToCreatedPromptDto(
+    prompt: PromptWithAuthorAndCategory
+  ): CreatedPromptDto {
+    return {
+      id: prompt.id,
+      title: prompt.title,
+      description: prompt.description,
+      content: prompt.content,
+      visibility: prompt.visibility,
+      createdAt: prompt.createdAt,
+      updatedAt: prompt.updatedAt,
+      author: prompt.author,
+      category: prompt.category,
     };
   }
 }
