@@ -107,7 +107,8 @@ export class PromptService {
       where: { id: promptId },
       data: {
         title,
-        description,
+        description:
+          description && description.length > 0 ? description.trim() : null,
         content,
         visibility,
         categoryId,

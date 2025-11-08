@@ -61,6 +61,16 @@ export default function Navigation({ session }: { session: Session | null }) {
                 >
                   Dashboard
                 </Link>
+                <Link
+                  href="/add"
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive("/add")
+                      ? "text-indigo-600 bg-indigo-50"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                >
+                  Add Prompt
+                </Link>
                 <button
                   onClick={handleSignOut}
                   className="px-3 py-2 rounded-md text-sm font-medium transition-colors text-gray-600 hover:text-gray-900 cursor-pointer"

@@ -18,7 +18,7 @@ export const getPrompts = <
       author: {
         select: {
           id: true,
-          name: true,
+          username: true,
           image: true,
         },
       },
