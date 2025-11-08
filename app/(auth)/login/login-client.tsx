@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn, signInSocial, signUp } from "@/lib/actions/auth-actions";
 
-export default function AuthClientPage() {
+export default function LoginClientPage() {
   const [isSignIn, setIsSignIn] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

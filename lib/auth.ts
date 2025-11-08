@@ -27,8 +27,8 @@ export const auth = betterAuth({
     username({
       maxUsernameLength: 32,
       minUsernameLength: 3,
-      displayUsernameValidator: (displayUsername) => {
-        return /^[a-zA-Z0-9_-]+$/.test(displayUsername);
+      usernameValidator(username) {
+        return /^[a-zA-Z0-9_-]+$/.test(username);
       },
       usernameNormalization: (username) => {
         return username.toLowerCase();
