@@ -77,5 +77,3 @@ This document outlines the implementation plan for the `DELETE /api/prompts/{pro
     - Catch any other unexpected errors and return a `500 Internal Server Error`.
 7.  **Return Success Response**: If the service method executes successfully, return a `204 No Content` response.
 8.  **Add Logging**: Implement structured logging for errors, particularly for `500` status codes, to capture context for debugging.
-
-

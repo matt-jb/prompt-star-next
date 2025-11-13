@@ -10,7 +10,10 @@ import { ZodError } from "zod";
 
 const promptService = new PromptService();
 
-export async function PATCH(req: NextRequest, props: { params: Promise<{ promptId: string }> }) {
+export async function PATCH(
+  req: NextRequest,
+  props: { params: Promise<{ promptId: string }> }
+) {
   const params = await props.params;
   try {
     const session = await auth.api.getSession({
@@ -62,7 +65,10 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ promptI
   }
 }
 
-export async function GET(req: NextRequest, props: { params: Promise<{ promptId: string }> }) {
+export async function GET(
+  req: NextRequest,
+  props: { params: Promise<{ promptId: string }> }
+) {
   const params = await props.params;
   try {
     const validation = getPromptDetailsSchema.safeParse(params);
@@ -105,7 +111,10 @@ export async function GET(req: NextRequest, props: { params: Promise<{ promptId:
   }
 }
 
-export async function DELETE(req: NextRequest, props: { params: Promise<{ promptId: string }> }) {
+export async function DELETE(
+  req: NextRequest,
+  props: { params: Promise<{ promptId: string }> }
+) {
   const params = await props.params;
   try {
     const validation = deletePromptSchema.safeParse(params);

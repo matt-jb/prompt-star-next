@@ -84,5 +84,3 @@ This document outlines the implementation plan for the `GET /api/prompts/{prompt
     - Requesting a non-existent prompt (expect 404).
     - Requesting a private prompt as an unauthenticated user (expect 403).
     - Requesting a private prompt as an authenticated user who is not the author (expect 403).
-
-
