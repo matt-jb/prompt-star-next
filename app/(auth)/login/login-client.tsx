@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { signIn, signInSocial, signUp } from "@/lib/actions/auth-actions";
 
 export default function LoginClientPage() {
@@ -11,7 +10,6 @@ export default function LoginClientPage() {
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const router = useRouter();
 
   // Get callback URL from search params (set by middleware)
 

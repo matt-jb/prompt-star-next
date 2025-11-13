@@ -43,6 +43,7 @@ describe("PromptService", () => {
         },
       };
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const mockTransaction = jest.fn(async (callback: any) => {
         const mockPrisma = {
           category: {
@@ -86,6 +87,7 @@ describe("PromptService", () => {
     });
 
     it("should throw NotFoundError when category does not exist", async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const mockTransaction = jest.fn(async (callback: any) => {
         const mockPrisma = {
           category: {
@@ -123,6 +125,7 @@ describe("PromptService", () => {
       };
 
       await expect(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         promptService.createPrompt(invalidData as any, "clkz7x8x80002")
       ).rejects.toThrow();
     });
