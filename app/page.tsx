@@ -8,9 +8,9 @@ import { CategoryFilter } from "./features/prompts/components/category-filter";
 import { auth } from "@/lib/auth";
 
 type HomePageProps = {
-  searchParams: {
+  searchParams: Promise<{
     categoryId?: string;
-  };
+  }>;
 };
 
 export default async function Home({ searchParams }: HomePageProps) {

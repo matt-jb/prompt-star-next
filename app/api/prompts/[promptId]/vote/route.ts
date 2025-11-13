@@ -6,8 +6,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { promptId: string } }
+  props: { params: Promise<{ promptId: string }> }
 ) {
+  const params = await props.params;
   try {
     const session = await auth.api.getSession({
       headers: request.headers,
@@ -16,7 +17,7 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { promptId } = await params;
+    const { promptId } = params;
     const vote = await createVote(promptId, session.user.id);
 
     const voteDto: VoteDto = {
@@ -45,8 +46,9 @@ export async function POST(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { promptId: string } }
+  props: { params: Promise<{ promptId: string }> }
 ) {
+  const params = await props.params;
   try {
     const session = await auth.api.getSession({
       headers: request.headers,
@@ -56,7 +58,7 @@ export async function DELETE(
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const { promptId } = await params;
+    const { promptId } = params;
 
     if (!promptId) {
       return NextResponse.json(
